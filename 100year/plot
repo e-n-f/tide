@@ -12,6 +12,9 @@ $width = 14000;
 $height = 20;
 # really 24 after offset and borders
 
+print "36 36 scale\n";
+# so now 864 points tall
+
 $below = 3.666666;
 print "0 $below translate\n";
 
@@ -125,7 +128,9 @@ printf("%.3f %.3f %.3f setrgbcolor\n", 83/255, 161/255, 24/255);
 $min = 315;
 $max = 472;
 
-$scale = 3 / ($max - $min);
+$scale = 3 / ($max - $min) * .8;
+
+$m1 += .1 * ($m2 - $m1);
 
 $xoff = 0;
 while ($xoff * $scale < 612) {
