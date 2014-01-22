@@ -17,6 +17,16 @@ while (<>) {
 	chomp;
 	($date, $level) = split(/,/);
 
+	$year = $date;
+	$year =~ s/-.*//;
+
+	$x{$year} += $seq / 982324 * $width;
+	$y{$year} += $level;
+	$count{$year}++;
+
+	$avg += ($level - $min) * $height / ($max - $min);
+	$count++;
+
 	printf("%.6f %.6f %s\n",
 		$seq++ / 982324 * $width,
 		($level - $min) * $height / ($max - $min),
@@ -35,5 +45,33 @@ while (<>) {
 
 if ($within) {
 	print "stroke\n";
+	$within = 0;
 }
 
+print "0 setlinewidth\n";
+
+$maxavg = $y{1910} / $count{1910};
+$minavg = $y{1910} / $count{1910};
+
+for $year (sort(keys(%count))) {
+	$v = $y{$year} / $count{$year};
+
+	if ($v > $maxavg) {
+		$maxavg = $v;
+	}
+	if ($v < $minavg) {
+		$minavg = $v;
+	}
+}
+
+for $year (sort(keys(%count))) {
+	printf("%.6f %.6f %s %% %s\n",
+		$x{$year} / $count{$year},
+		($y{$year} / $count{$year} - $minavg) * $height / ($maxavg - $minavg),
+		$within ? "lineto" : "moveto",
+		$year);
+
+	$within = 1;
+}
+
+print "stroke\n";
