@@ -1,0 +1,26 @@
+#!/usr/bin/perl
+
+$min = 1325404800;
+$max = 1357023600;
+
+$miny = -4;
+$maxy = 13;
+
+print "0 setlinewidth\n";
+
+while (<>) {
+	chomp;
+	($x, $y) = split(/ /);
+
+	printf("%.6f %.6f ",
+		($x - $min) * 6000 / ($max - $min),
+		($y - $miny) * 100 / ($maxy - $miny));
+
+	if ($x == $min) {
+		print "moveto\n";
+	} else {
+		print "lineto\n";
+	}
+}
+
+print "stroke\n";

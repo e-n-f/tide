@@ -1,0 +1,1 @@
+tide -s '00:15' -m r -l 'Seattle, Puget Sound, Washington' -b '1963-01-01 00:00' -e '1964-01-01 00:00'
