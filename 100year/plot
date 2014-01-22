@@ -11,7 +11,15 @@ $max = 4.418;
 $width = 14000;
 $height = 20;
 
+printf("%.3f %.3f %.3f setrgbcolor\n", 65/255, 136/255, 132/255);
+print "newpath 0 0 moveto $width 0 lineto $width $height lineto 0 $height lineto closepath fill\n";
+
 print "0 setlinewidth\n";
+
+printf("%.3f %.3f %.3f setrgbcolor\n", 0/255, 66/255, 220/255);
+
+print "newpath 0 $height moveto\n";
+$within = 1;
 
 while (<>) {
 	chomp;
@@ -32,19 +40,30 @@ while (<>) {
 		($level - $min) * $height / ($max - $min),
 		$within ? "lineto" : "moveto");
 
-	$within = 1;
-
 	if ($seq % 200 == 0) {
-		print "stroke\n";
 		printf("%.6f %.6f %s\n",
-			$seq++ / 982324 * $width,
+			$seq / 982324 * $width,
+			$height,
+			"lineto closepath fill");
+
+		printf("newpath %.6f %.6f %s\n",
+			$seq / 982324 * $width,
+			$height,
+			"moveto ");
+
+		printf("%.6f %.6f %s\n",
+			$seq / 982324 * $width,
 			($level - $min) * $height / ($max - $min),
-			"moveto");
+			"lineto ");
 	}
 }
 
 if ($within) {
-	print "stroke\n";
+	printf("%.6f %.6f %s\n",
+		$seq / 982324 * $width,
+		$height,
+		"lineto closepath fill");
+
 	$within = 0;
 }
 
@@ -63,6 +82,8 @@ for $year (sort(keys(%count))) {
 		$minavg = $v;
 	}
 }
+
+printf("%.3f %.3f %.3f setrgbcolor\n", 235/255, 124/255, 50/255);
 
 for $year (sort(keys(%count))) {
 	printf("%.6f %.6f %s %% %s\n",
