@@ -10,13 +10,15 @@ $max = 4.418;
 
 $width = 14000;
 $height = 20;
+# really 24 after offset and borders
 
-printf("%.3f %.3f %.3f setrgbcolor\n", 81/255, 178/255, 210/255);
+$below = 3.666666;
+print "0 $below translate\n";
+
+printf("%.3f %.3f %.3f setrgbcolor\n", 90/255, 180/255, 220/255);
 print "newpath 0 0 moveto $width 0 lineto $width $height lineto 0 $height lineto closepath fill\n";
 
-$bottom .= "0 setlinewidth\n";
-
-$bottom .= sprintf("%.3f %.3f %.3f setrgbcolor\n", 237/255, 130/255, 51/255);
+$bottom .= sprintf("%.3f %.3f %.3f setrgbcolor\n", 228/255, 132/255, 157/255);
 
 #print "newpath 0 $height moveto\n";
 #$within = 1;
@@ -57,7 +59,7 @@ if ($within) {
 	$within = 0;
 }
 
-print "0 setlinewidth\n";
+print ".05 setlinewidth\n";
 
 $maxavg = $y{1910} / $count{1910};
 $minavg = $y{1910} / $count{1910};
@@ -73,7 +75,7 @@ for $year (sort(keys(%count))) {
 	}
 }
 
-printf("%.3f %.3f %.3f setrgbcolor\n", 63/255, 136/255, 191/255);
+printf("%.3f %.3f %.3f setrgbcolor\n", 228/255, 132/255, 157/255);
 
 print "newpath 0 0 moveto\n";
 $within = 1;
@@ -87,6 +89,8 @@ for $year (sort(keys(%count))) {
 	$within = 1;
 }
 
+printf("%.3f %.3f %.3f setrgbcolor\n", 55/255, 126/255, 195/255);
+
 printf("%.6f %.6f %s\n",
 	$seq / 982324 * $width,
 	0,
@@ -94,3 +98,62 @@ printf("%.6f %.6f %s\n",
 
 
 print $bottom;
+
+$extraheight = $height + .333333;
+
+print "0 $height moveto $width $height lineto $width $extraheight lineto 0 $extraheight lineto closepath fill\n";
+
+printf("%.3f %.3f %.3f setrgbcolor\n", 89/255, 173/255, 228/255);
+
+$mbelow = -$below;
+print "0 0 moveto 0 $mbelow lineto $width $mbelow lineto $width 0 lineto closepath fill\n";
+
+printf("%.3f %.3f %.3f setrgbcolor\n", 231/255, 122/255, 153/255);
+
+$m1 = 0 - .3333333;
+$m2 = $mbelow + .33333333;
+
+print "0 $m1 moveto 0 $m2 lineto $width $m2 lineto $width $m1 lineto closepath fill\n";
+
+open(IN, "ekg");
+$ekg = <IN>;
+close(IN);
+
+printf("%.3f %.3f %.3f setrgbcolor\n", 83/255, 161/255, 24/255);
+
+# 315 to 472
+$min = 315;
+$max = 472;
+
+$scale = 3 / ($max - $min);
+
+$xoff = 0;
+while ($xoff * $scale < 612) {
+	$text = $ekg;
+
+	$again = 1;
+	while ($again) {
+		$again = 0;
+
+		if ($text =~ s/^M ([0-9-.]+),([0-9-.]+) *//) {
+			printf("%.6f %.6f moveto\n", ($1 + $xoff) * $scale, $m1 - ($2 - $min) * $scale);
+			$again = 1;
+		}
+		if ($text =~ s/^L ([0-9-.]+),([0-9-.]+) *//) {
+			printf("%.6f %.6f lineto\n", ($1 + $xoff) * $scale, $m1 - ($2 - $min) * $scale);
+			$again = 1;
+		}
+		if ($text =~ s/^C ([0-9-.]+),([0-9-.]+) ([0-9-.]+),([0-9-.]+) ([0-9-.]+),([0-9-.]+) *//) {
+			printf("%.6f %.6f %.6f %.6f %.6f %.6f curveto\n",
+				 ($1 + $xoff) * $scale, $m1 - ($2 - $min) * $scale,
+				 ($3 + $xoff) * $scale, $m1 - ($4 - $min) * $scale,
+				 ($5 + $xoff) * $scale, $m1 - ($6 - $min) * $scale,
+			);
+			$again = 1;
+		}
+	}
+
+	print "stroke\n";
+
+	$xoff += 255;
+}
