@@ -1,0 +1,39 @@
+#!/usr/bin/perl
+
+$header = <>;
+$header = <>;
+
+# 982324
+
+$min = -1.523;
+$max = 4.418;
+
+$width = 14000;
+$height = 20;
+
+print "0 setlinewidth\n";
+
+while (<>) {
+	chomp;
+	($date, $level) = split(/,/);
+
+	printf("%.6f %.6f %s\n",
+		$seq++ / 982324 * $width,
+		($level - $min) * $height / ($max - $min),
+		$within ? "lineto" : "moveto");
+
+	$within = 1;
+
+	if ($seq % 200 == 0) {
+		print "stroke\n";
+		printf("%.6f %.6f %s\n",
+			$seq++ / 982324 * $width,
+			($level - $min) * $height / ($max - $min),
+			"moveto");
+	}
+}
+
+if ($within) {
+	print "stroke\n";
+}
+
