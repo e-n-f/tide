@@ -11,15 +11,15 @@ $max = 4.418;
 $width = 14000;
 $height = 20;
 
-printf("%.3f %.3f %.3f setrgbcolor\n", 65/255, 136/255, 132/255);
+printf("%.3f %.3f %.3f setrgbcolor\n", 81/255, 178/255, 210/255);
 print "newpath 0 0 moveto $width 0 lineto $width $height lineto 0 $height lineto closepath fill\n";
 
-print "0 setlinewidth\n";
+$bottom .= "0 setlinewidth\n";
 
-printf("%.3f %.3f %.3f setrgbcolor\n", 0/255, 66/255, 220/255);
+$bottom .= sprintf("%.3f %.3f %.3f setrgbcolor\n", 237/255, 130/255, 51/255);
 
-print "newpath 0 $height moveto\n";
-$within = 1;
+#print "newpath 0 $height moveto\n";
+#$within = 1;
 
 while (<>) {
 	chomp;
@@ -35,34 +35,24 @@ while (<>) {
 	$avg += ($level - $min) * $height / ($max - $min);
 	$count++;
 
-	printf("%.6f %.6f %s\n",
+	$bottom .= sprintf("%.6f %.6f %s\n",
 		$seq++ / 982324 * $width,
 		($level - $min) * $height / ($max - $min),
 		$within ? "lineto" : "moveto");
+	$within = 1;
 
 	if ($seq % 200 == 0) {
-		printf("%.6f %.6f %s\n",
-			$seq / 982324 * $width,
-			$height,
-			"lineto closepath fill");
+		$bottom .= "stroke\n";
 
-		printf("newpath %.6f %.6f %s\n",
-			$seq / 982324 * $width,
-			$height,
-			"moveto ");
-
-		printf("%.6f %.6f %s\n",
-			$seq / 982324 * $width,
+		$bottom .= sprintf("%.6f %.6f %s\n",
+			$seq++ / 982324 * $width,
 			($level - $min) * $height / ($max - $min),
-			"lineto ");
+			"moveto");
 	}
 }
 
 if ($within) {
-	printf("%.6f %.6f %s\n",
-		$seq / 982324 * $width,
-		$height,
-		"lineto closepath fill");
+	$bottom .= "stroke\n";
 
 	$within = 0;
 }
@@ -83,8 +73,10 @@ for $year (sort(keys(%count))) {
 	}
 }
 
-printf("%.3f %.3f %.3f setrgbcolor\n", 235/255, 124/255, 50/255);
+printf("%.3f %.3f %.3f setrgbcolor\n", 63/255, 136/255, 191/255);
 
+print "newpath 0 0 moveto\n";
+$within = 1;
 for $year (sort(keys(%count))) {
 	printf("%.6f %.6f %s %% %s\n",
 		$x{$year} / $count{$year},
@@ -95,4 +87,10 @@ for $year (sort(keys(%count))) {
 	$within = 1;
 }
 
-print "stroke\n";
+printf("%.6f %.6f %s\n",
+	$seq / 982324 * $width,
+	0,
+	"lineto closepath fill\n");
+
+
+print $bottom;
