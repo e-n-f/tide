@@ -1,7 +1,12 @@
 #!/usr/bin/perl
 
-$header = <>;
-$header = <>;
+$xoff = $ARGV[0];
+shift @ARGV;
+
+print STDERR "$xoff\n";
+
+$header = <STDIN>;
+$header = <STDIN>;
 
 # 982324
 
@@ -29,7 +34,7 @@ $bottom .= sprintf("%.3f %.3f %.3f setrgbcolor\n", 214/255, 60/255, 60/255);
 #print "newpath 0 $height moveto\n";
 #$within = 1;
 
-while (<>) {
+while (<STDIN>) {
 	chomp;
 	($date, $level) = split(/,/);
 
@@ -44,7 +49,7 @@ while (<>) {
 	$count++;
 
 	$bottom .= sprintf("%.6f %.6f %s\n",
-		$seq++ / 982324 * $width,
+		$seq++ / 982324 * $width - $xoff,
 		($level - $min) * $height / ($max - $min),
 		$within ? "lineto" : "moveto");
 	$within = 1;
@@ -53,7 +58,7 @@ while (<>) {
 		$bottom .= "stroke\n";
 
 		$bottom .= sprintf("%.6f %.6f %s\n",
-			$seq++ / 982324 * $width,
+			$seq++ / 982324 * $width - $xoff,
 			($level - $min) * $height / ($max - $min),
 			"moveto");
 	}
@@ -84,11 +89,11 @@ for $year (sort(keys(%count))) {
 # ???
 printf("%.3f %.3f %.3f setrgbcolor\n", 0, 0, 0);
 
-print "newpath 0 $mbelow moveto\n";
+print "newpath -$xoff $mbelow moveto\n";
 $within = 1;
 for $year (sort(keys(%count))) {
 	printf("%.6f %.6f %s %% %s\n",
-		$x{$year} / $count{$year},
+		$x{$year} / $count{$year} - $xoff,
 		($y{$year} / $count{$year} - $minavg) * $height / ($maxavg - $minavg) + $mbelow,
 		$within ? "lineto" : "moveto",
 		$year);
@@ -100,7 +105,7 @@ for $year (sort(keys(%count))) {
 printf("%.3f %.3f %.3f setrgbcolor\n", 112/255, 200/255, 250/255);
 
 printf("%.6f %.6f %s\n",
-	$seq / 982324 * $width,
+	$seq / 982324 * $width - $xoff,
 	$mbelow,
 	"lineto closepath fill\n");
 
@@ -114,7 +119,7 @@ $extraheight = $height + .333333;
 # printf("%.3f %.3f %.3f setrgbcolor\n", 89/255, 173/255, 228/255);
 
 $mbelow = -$below;
-# print "0 0 moveto 0 $mbelow lineto $width $mbelow lineto $width 0 lineto closepath fill\n";
+# print "-$xoff 0 moveto 0 $mbelow lineto $width $mbelow lineto $width 0 lineto closepath fill\n";
 
 
 $m1 = 0 - .3333333;
@@ -139,8 +144,8 @@ $m1 += .1 * ($m2 - $m1);
 
 $voff = 10;
 
-$xoff = 0;
-while ($xoff * $scale < 612) {
+$xkgoff = 0;
+while ($xkgoff * $scale < 612) {
 	$text = $ekg;
 
 	$again = 1;
@@ -148,18 +153,18 @@ while ($xoff * $scale < 612) {
 		$again = 0;
 
 		if ($text =~ s/^M ([0-9-.]+),([0-9-.]+) *//) {
-			printf("%.6f %.6f moveto\n", ($1 + $xoff) * $scale, $m1 - ($2 - $min) * $scale + $voff);
+			printf("%.6f %.6f moveto\n", ($1 + $xkgoff) * $scale - $xoff, $m1 - ($2 - $min) * $scale + $voff);
 			$again = 1;
 		}
 		if ($text =~ s/^L ([0-9-.]+),([0-9-.]+) *//) {
-			printf("%.6f %.6f lineto\n", ($1 + $xoff) * $scale, $m1 - ($2 - $min) * $scale + $voff);
+			printf("%.6f %.6f lineto\n", ($1 + $xkgoff) * $scale - $xoff, $m1 - ($2 - $min) * $scale + $voff);
 			$again = 1;
 		}
 		if ($text =~ s/^C ([0-9-.]+),([0-9-.]+) ([0-9-.]+),([0-9-.]+) ([0-9-.]+),([0-9-.]+) *//) {
 			printf("%.6f %.6f %.6f %.6f %.6f %.6f curveto\n",
-				 ($1 + $xoff) * $scale, $m1 - ($2 - $min) * $scale + $voff,
-				 ($3 + $xoff) * $scale, $m1 - ($4 - $min) * $scale + $voff,
-				 ($5 + $xoff) * $scale, $m1 - ($6 - $min) * $scale + $voff,
+				 ($1 + $xkgoff) * $scale - $xoff, $m1 - ($2 - $min) * $scale + $voff,
+				 ($3 + $xkgoff) * $scale - $xoff, $m1 - ($4 - $min) * $scale + $voff,
+				 ($5 + $xkgoff) * $scale - $xoff, $m1 - ($6 - $min) * $scale + $voff,
 			);
 			$again = 1;
 		}
@@ -167,5 +172,7 @@ while ($xoff * $scale < 612) {
 
 	print "stroke\n";
 
-	$xoff += 255;
+	$xkgoff += 255;
 }
+
+print "showpage\n";
