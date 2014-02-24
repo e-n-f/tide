@@ -145,7 +145,7 @@ $m1 += .1 * ($m2 - $m1);
 $voff = 10;
 
 $xkgoff = 0;
-while ($xkgoff * $scale < 612) {
+while ($xkgoff * $scale < 14000) {
 	$text = $ekg;
 
 	$again = 1;
