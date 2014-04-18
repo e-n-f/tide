@@ -25,11 +25,14 @@ print "0 $below translate\n";
 $mbelow = -$below;
 
 # big background
-printf("%.3f %.3f %.3f setrgbcolor\n", 4/255, 74/255, 251/255);
+printf("%.3f %.3f %.3f setrgbcolor\n", 41/255, 147/255, 251/255);
 print "newpath 0 $mbelow moveto $width $mbelow lineto $width $height lineto 0 $height lineto closepath fill\n";
 
 # daily tide variation
-$bottom .= sprintf("%.3f %.3f %.3f setrgbcolor\n", 214/255, 60/255, 60/255);
+$bottom .= sprintf("%.3f %.3f %.3f setrgbcolor\n", 233/255, 63/255, 51/255);
+
+# fill for daily tide
+$behind .= sprintf("%.3f %.3f %.3f setrgbcolor\n", 89/255, 193/255, 200/255);
 
 #print "newpath 0 $height moveto\n";
 #$within = 1;
@@ -52,10 +55,29 @@ while (<STDIN>) {
 		$seq++ / 982324 * $width - $xoff,
 		($level - $min) * $height / ($max - $min),
 		$within ? "lineto" : "moveto");
+
+	if (!$within) {
+		$behind .= sprintf("newpath %.6f %.6f moveto\n",
+			($seq - 1) / 982324 * $width - $xoff,
+			$mbelow);
+	}
+
 	$within = 1;
+
+	$behind .= sprintf("%.6f %.6f %s\n",
+		($seq - 1) / 982324 * $width - $xoff,
+		($level - $min) * $height / ($max - $min),
+		"lineto");
 
 	if ($seq % 200 == 0) {
 		$bottom .= "stroke\n";
+
+		$behind .= sprintf("%.6f %.6f lineto closepath fill\n",
+			($seq - 1) / 982324 * $width - $xoff,
+			$mbelow);
+		$behind .= sprintf("newpath %.6f %.6f moveto\n",
+			($seq - 1) / 982324 * $width - $xoff,
+			$mbelow);
 
 		$bottom .= sprintf("%.6f %.6f %s\n",
 			$seq++ / 982324 * $width - $xoff,
@@ -68,7 +90,13 @@ if ($within) {
 	$bottom .= "stroke\n";
 
 	$within = 0;
+
+	$behind .= sprintf("%.6f %.6f lineto closepath fill\n",
+		($seq - 1) / 982324 * $width - $xoff,
+		$mbelow);
 }
+
+print $behind;
 
 print ".05 setlinewidth\n";
 
@@ -102,7 +130,7 @@ for $year (sort(keys(%count))) {
 }
 
 # yearly trend
-printf("%.3f %.3f %.3f setrgbcolor\n", 112/255, 200/255, 250/255);
+printf("%.3f %.3f %.3f setrgbcolor\n", 41/255, 147/255, 251/255);
 
 printf("%.6f %.6f %s\n",
 	$seq / 982324 * $width - $xoff,
@@ -132,7 +160,7 @@ $ekg = <IN>;
 close(IN);
 
 # ekg
-printf("%.3f %.3f %.3f setrgbcolor\n", 112/255, 200/255, 250/255);
+printf("%.3f %.3f %.3f setrgbcolor\n", 255/255, 245/255, 50/255);
 
 # 315 to 472
 $min = 315;
