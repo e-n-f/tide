@@ -58,7 +58,7 @@ while (<STDIN>) {
 
 	if (!$within) {
 		$behind .= sprintf("newpath %.6f %.6f moveto\n",
-			($seq - 1) / 982324 * $width - $xoff,
+			($seq - 2) / 982324 * $width - $xoff,
 			$mbelow);
 	}
 
@@ -72,12 +72,20 @@ while (<STDIN>) {
 	if ($seq % 200 == 0) {
 		$bottom .= "stroke\n";
 
+		$behind .= sprintf("%.6f %.6f %s\n",
+			($seq) / 982324 * $width - $xoff,
+			($level - $min) * $height / ($max - $min),
+			"lineto");
 		$behind .= sprintf("%.6f %.6f lineto closepath fill\n",
-			($seq - 1) / 982324 * $width - $xoff,
+			($seq) / 982324 * $width - $xoff,
 			$mbelow);
 		$behind .= sprintf("newpath %.6f %.6f moveto\n",
-			($seq - 1) / 982324 * $width - $xoff,
+			($seq - 2) / 982324 * $width - $xoff,
 			$mbelow);
+		$behind .= sprintf("%.6f %.6f %s\n",
+			($seq - 2) / 982324 * $width - $xoff,
+			($level - $min) * $height / ($max - $min),
+			"lineto");
 
 		$bottom .= sprintf("%.6f %.6f %s\n",
 			$seq++ / 982324 * $width - $xoff,
@@ -92,7 +100,7 @@ if ($within) {
 	$within = 0;
 
 	$behind .= sprintf("%.6f %.6f lineto closepath fill\n",
-		($seq - 1) / 982324 * $width - $xoff,
+		($seq) / 982324 * $width - $xoff,
 		$mbelow);
 }
 
