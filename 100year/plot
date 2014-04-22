@@ -130,7 +130,7 @@ $within = 1;
 for $year (sort(keys(%count))) {
 	printf("%.6f %.6f %s %% %s\n",
 		$x{$year} / $count{$year} - $xoff,
-		($y{$year} / $count{$year} - $minavg) * $height / ($maxavg - $minavg) + $mbelow,
+		($y{$year} / $count{$year} - $minavg) * $height * .5 / ($maxavg - $minavg) + $mbelow,
 		$within ? "lineto" : "moveto",
 		$year);
 
