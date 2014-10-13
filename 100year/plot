@@ -17,8 +17,8 @@ $width = 14000;
 $height = 20;
 # really 24 after offset and borders
 
-print "36 36 scale\n";
-# so now 864 points tall
+print "14.52911224263891963660 42 scale\n";
+# so now 1008 points tall
 
 $below = 4;
 print "0 $below translate\n";
