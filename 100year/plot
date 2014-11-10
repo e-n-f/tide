@@ -17,6 +17,8 @@ $width = 14000;
 $height = 20;
 # really 24 after offset and borders
 
+print "0 36 translate\n";
+
 print "14.52911224263891963660 42 scale\n";
 # so now 1008 points tall
 
@@ -24,9 +26,12 @@ $below = 4;
 print "0 $below translate\n";
 $mbelow = -$below;
 
+$mbelow2 = $mbelow - 72;
+$mabove2 = $height + 72;
+
 # big background
 printf("%.3f %.3f %.3f setrgbcolor\n", 41/255, 147/255, 251/255);
-print "newpath 0 $mbelow moveto $width $mbelow lineto $width $height lineto 0 $height lineto closepath fill\n";
+print "newpath 0 $mbelow2 moveto $width $mbelow2 lineto $width $mabove2 lineto 0 $mabove2 lineto closepath fill\n";
 
 # daily tide variation
 $bottom .= sprintf("%.3f %.3f %.3f setrgbcolor\n", 233/255, 63/255, 51/255);
